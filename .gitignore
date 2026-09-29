@@ -1,0 +1,31 @@
+# Segredos e configurações locais
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+client_secret*.json
+secrets*.json
+manifest.local.json
+
+# Dependências e resultados de testes
+node_modules/
+test-results/
+playwright-report/
+coverage/
+
+# Perfis e artefatos temporários locais
+.chrome-*/
+*-review.png
+*.log
+*.tmp
+
+# Editores e sistema operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini

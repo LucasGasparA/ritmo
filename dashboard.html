@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>Ritmo</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon32.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <a class="brand" href="#" aria-label="Ritmo">
+          <span class="brand-mark" aria-hidden="true">
+            <img src="icons/icon32.png" alt="" />
+          </span>
+          <span>ritmo</span>
+        </a>
+
+        <nav class="main-nav" aria-label="Navegação principal">
+          <button class="nav-item active" data-view="overview">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+            Visão geral
+          </button>
+          <button class="nav-item" data-view="comparison">
+            <svg viewBox="0 0 24 24"><path d="M4 18V9M10 18V5M16 18v-7M22 18H2"/><path d="m4 6 5-3 6 4 6-4"/></svg>
+            Comparar semanas
+          </button>
+        </nav>
+
+        <div class="header-actions">
+          <div class="source-pill" id="sourcePill"><span></span> Agenda não conectada</div>
+          <button class="button button-ghost icon-only" id="syncButton" title="Atualizar dados" aria-label="Atualizar dados">
+            <svg viewBox="0 0 24 24"><path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M6.1 9A7 7 0 0 1 18.4 6.4L20 11M4 13l1.6 4.6A7 7 0 0 0 17.9 15"/></svg>
+          </button>
+          <button class="button button-ghost icon-only" id="settingsButton" title="Configurações" aria-label="Configurações">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <section class="view-panel" id="overviewView">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">VISÃO GERAL</p>
+            <h1>Como foi sua semana?</h1>
+          </div>
+        </header>
+
+        <section class="period-bar">
+          <div class="period-switcher">
+            <button class="icon-button" id="previousWeek" aria-label="Semana anterior"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="current-period" id="currentPeriod"></button>
+            <button class="icon-button" id="nextWeek" aria-label="Próxima semana"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <button class="today-button" id="todayButton">Esta semana</button>
+          <p class="last-sync" id="lastSync">Atualizado agora</p>
+        </section>
+
+        <section class="kpi-grid" id="kpiGrid"></section>
+
+        <section class="content-grid">
+          <article class="card distribution-card">
+            <div class="card-header">
+              <div>
+                <p class="section-label">DISTRIBUIÇÃO DO TEMPO</p>
+                <h2>Onde seu tempo foi investido</h2>
+              </div>
+              <button class="more-button" aria-label="Mais opções">•••</button>
+            </div>
+            <div class="distribution-content">
+              <div class="donut-wrap">
+                <svg class="donut" id="donutChart" viewBox="0 0 220 220" aria-label="Gráfico de distribuição"></svg>
+                <div class="donut-center"><strong id="donutHours">0h</strong><span>registradas</span></div>
+                <div class="chart-tooltip" id="donutTooltip" role="tooltip" aria-hidden="true"></div>
+              </div>
+              <div class="legend" id="categoryLegend"></div>
+            </div>
+          </article>
+
+          <article class="card capacity-card">
+            <div class="card-header compact">
+              <p class="section-label">CAPACIDADE</p>
+              <span class="status-badge" id="capacityStatus">Saudável</span>
+            </div>
+            <div class="remaining-time">
+              <div class="remaining-heading">
+                <i aria-hidden="true"></i>
+                <div><h2>Tempo restante</h2><p>Com base no seu horário de trabalho</p></div>
+              </div>
+              <strong id="availableHours">0h</strong>
+            </div>
+            <p class="capacity-reference">Jornada configurada: <b id="capacityHours">40h</b> por semana</p>
+            <div class="progress-track"><div class="progress-fill" id="capacityProgress"></div></div>
+            <div class="capacity-meta">
+              <span><i class="dot used"></i><b id="usedHours">0h</b> ocupadas</span>
+              <span><i class="dot free"></i><b id="freeHours">0h</b> livres</span>
+            </div>
+            <div class="capacity-callout" id="capacityCallout"></div>
+            <button type="button" class="capacity-settings-button" id="adjustWorkHours">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              Ajustar horário de trabalho
+            </button>
+          </article>
+
+          <article class="card weekly-card">
+            <div class="card-header">
+              <div>
+                <p class="section-label">RITMO DA SEMANA</p>
+                <h2>Carga por dia</h2>
+              </div>
+              <div class="chart-key"><span><i></i>Ocupado</span><span><i></i>Capacidade</span></div>
+            </div>
+            <div class="daily-chart" id="dailyChart"></div>
+          </article>
+
+          <article class="card insights-card">
+            <div class="card-header compact">
+              <div>
+                <p class="section-label">LEITURAS DA SEMANA</p>
+                <h2>O que merece atenção</h2>
+              </div>
+              <span class="spark-icon"><svg viewBox="0 0 24 24"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3Z"/><path d="m19 15 .7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7L19 15Z"/></svg></span>
+            </div>
+            <div class="insight-list" id="insightList"></div>
+          </article>
+
+          <article class="card labels-card" id="labelsSection">
+            <div class="card-header">
+              <div>
+                <p class="section-label">DETALHAMENTO</p>
+                <h2>Tempo por categoria</h2>
+              </div>
+              <button class="text-button" id="toggleLabels">Ver todas</button>
+            </div>
+            <div class="labels-table" id="labelsTable"></div>
+          </article>
+
+          <article class="card events-card" id="eventsSection">
+            <div class="card-header">
+              <div>
+                <p class="section-label">COMPROMISSOS</p>
+                <h2>Resumo da agenda</h2>
+              </div>
+              <span class="event-count" id="eventCount">0 eventos</span>
+            </div>
+            <div class="event-list" id="eventList"></div>
+          </article>
+        </section>
+        </section>
+
+        <section class="view-panel comparison-view" id="comparisonView" hidden>
+          <header class="comparison-hero">
+            <div>
+              <p class="eyebrow">COMPARAÇÃO SEMANAL</p>
+              <h1>Onde seu tempo mudou?</h1>
+              <p>Compare sua distribuição de tempo com a semana anterior.</p>
+            </div>
+          </header>
+
+          <section class="period-bar comparison-period-bar">
+            <div class="period-switcher">
+              <button class="icon-button" id="comparisonPreviousWeek" aria-label="Comparação anterior"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+              <button class="current-period" id="comparisonPeriod"></button>
+              <button class="icon-button" id="comparisonNextWeek" aria-label="Próxima comparação"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+            <button class="today-button" id="comparisonTodayButton">Esta semana</button>
+            <p class="comparison-caption" id="comparisonCaption"></p>
+          </section>
+
+          <div class="comparison-message" id="comparisonMessage">
+            <span class="comparison-message-icon"><svg viewBox="0 0 24 24"><path d="M4 18V9M10 18V5M16 18v-7M22 18H2"/></svg></span>
+            <h2>Conecte sua agenda para comparar</h2>
+            <p>Usaremos seus compromissos reais das duas semanas, sem dados demonstrativos.</p>
+            <button type="button" class="button button-primary" id="comparisonAction">Abrir configurações</button>
+          </div>
+
+          <div id="comparisonContent" hidden>
+            <section class="comparison-kpi-grid" id="comparisonKpis"></section>
+            <section class="comparison-grid">
+              <article class="card comparison-categories-card">
+                <div class="card-header">
+                  <div><p class="section-label">DISTRIBUIÇÃO</p><h2>Tempo por categoria</h2></div>
+                  <div class="comparison-key"><span><i class="current"></i>Selecionada</span><span><i></i>Anterior</span></div>
+                </div>
+                <div class="comparison-categories" id="comparisonCategories"></div>
+              </article>
+              <article class="card comparison-reading-card">
+                <div class="card-header compact">
+                  <div><p class="section-label">LEITURA RÁPIDA</p><h2>O que mudou</h2></div>
+                  <span class="spark-icon"><svg viewBox="0 0 24 24"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3Z"/></svg></span>
+                </div>
+                <div class="comparison-readings" id="comparisonReadings"></div>
+              </article>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="settingsModal" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="modal-header">
+          <div><p class="section-label">PREFERÊNCIAS</p><h2 id="settingsTitle">Configure seu ritmo</h2></div>
+          <button class="icon-button" data-close-modal aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        </div>
+        <form id="settingsForm">
+          <div class="calendar-setting">
+            <span class="calendar-setting-icon" aria-hidden="true">G</span>
+            <div class="calendar-setting-copy">
+              <b>Google Agenda</b>
+              <small id="calendarConnectionStatus">Agenda não conectada</small>
+            </div>
+            <button type="button" class="button button-primary calendar-connect-button" id="connectButton">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20c5.5 0 9.2-3.9 9.2-9.4 0-.7-.1-1.2-.2-1.7h-9v3.6h5.2a4.5 4.5 0 0 1-2 2.9v2.4h3.2A9.7 9.7 0 0 0 22 12C22 6.5 17.5 2 12 2Z"/></svg>
+              Conectar Google Agenda
+            </button>
+          </div>
+          <div class="schedule-detect">
+            <div><b>Sugerir usando minha agenda</b><small>Analisa seus compromissos das últimas 8 semanas.</small></div>
+            <button type="button" class="button button-ghost" id="detectScheduleButton">
+              <svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/><path d="m18.4 5.6-2.1 2.1M7.7 16.3l-2.1 2.1M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1"/></svg>
+              Sugerir
+            </button>
+          </div>
+          <p class="schedule-hint" id="scheduleHint">Você poderá revisar tudo antes de salvar.</p>
+          <fieldset class="field">
+            <legend>Dias de trabalho</legend>
+            <small>Selecione os dias que fazem parte da sua jornada habitual.</small>
+            <div class="weekday-picker" id="weekdayPicker">
+              <label><input type="checkbox" value="1"><span>S</span></label>
+              <label><input type="checkbox" value="2"><span>T</span></label>
+              <label><input type="checkbox" value="3"><span>Q</span></label>
+              <label><input type="checkbox" value="4"><span>Q</span></label>
+              <label><input type="checkbox" value="5"><span>S</span></label>
+              <label><input type="checkbox" value="6"><span>S</span></label>
+              <label><input type="checkbox" value="0"><span>D</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="field periods-field">
+            <legend>Horário de trabalho por período</legend>
+            <small>O intervalo entre os dois períodos fica automaticamente fora da sua capacidade.</small>
+            <div class="period-list">
+              <div class="period-row">
+                <span class="period-title">1º período</span>
+                <label class="period-time"><span>Início</span><input class="time-input" type="time" id="period1Start" required /></label>
+                <span class="period-arrow" aria-hidden="true">→</span>
+                <label class="period-time"><span>Término</span><input class="time-input" type="time" id="period1End" required /></label>
+              </div>
+              <div class="period-row">
+                <span class="period-title">2º período</span>
+                <label class="period-time"><span>Início</span><input class="time-input" type="time" id="period2Start" required /></label>
+                <span class="period-arrow" aria-hidden="true">→</span>
+                <label class="period-time"><span>Término</span><input class="time-input" type="time" id="period2End" required /></label>
+              </div>
+            </div>
+          </fieldset>
+          <div class="capacity-preview">
+            <span><b>Capacidade semanal calculada</b><small>Soma dos períodos × dias de trabalho.</small></span>
+            <strong id="capacityPreview">40h</strong>
+          </div>
+          <label class="toggle-field">
+            <span><b>Ignorar eventos de dia inteiro</b><small>Férias e lembretes não entram nas horas trabalhadas. Eventos recusados são sempre desconsiderados.</small></span>
+            <input type="checkbox" id="ignoreAllDay"><i></i>
+          </label>
+          <div class="modal-actions">
+            <button type="button" class="button button-ghost" data-close-modal>Cancelar</button>
+            <button type="submit" class="button button-primary">Salvar preferências</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="setupModal" hidden>
+      <section class="modal setup-modal" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+        <div class="modal-header">
+          <div><p class="section-label">INTEGRAÇÃO</p><h2 id="setupTitle">Falta só conectar o Google</h2></div>
+          <button class="icon-button" data-close-modal aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        </div>
+        <p class="setup-intro">Para usar seus compromissos reais, crie uma credencial OAuth do tipo <b>Extensão do Chrome</b> e coloque o Client ID no arquivo <code>manifest.json</code>.</p>
+        <ol class="setup-steps">
+          <li><span>1</span><div><b>Ative a Google Calendar API</b><small>No seu projeto do Google Cloud.</small></div></li>
+          <li><span>2</span><div><b>Crie um cliente OAuth</b><small>Use o ID exibido em <code>chrome://extensions</code>.</small></div></li>
+          <li><span>3</span><div><b>Atualize o manifest</b><small>Substitua <code>COLOQUE_SEU_CLIENT_ID</code> e recarregue a extensão.</small></div></li>
+        </ol>
+        <p class="permission-note"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>O Ritmo solicita somente acesso de leitura ao seu calendário.</p>
+        <div class="modal-actions"><button class="button button-primary" data-close-modal>Entendi</button></div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="dashboard.js"></script>
+  </body>
+</html>
